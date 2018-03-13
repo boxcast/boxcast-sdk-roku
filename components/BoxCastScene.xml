@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="BoxCastScene" extends="Scene">
+
+  <children>
+    <TaskRegistry id="TaskRegistry" />
+    <TaskListBroadcasts id="TaskListBroadcasts" />
+    <TaskGetBroadcast id="TaskGetBroadcast" />
+
+    <Rectangle
+      id="Rectangle"
+      width="1920"
+      height="1080"
+      opacity="1.0"
+      translation="[0,0]" />
+
+    <Overhang
+      id="Overhang"
+      showClock="true"
+      height="115"
+      logoBaselineOffset="14"
+      showOptions="false"
+      logoUri="pkg:/images/logo.png" />
+
+    <RowList
+        id="RowList"
+
+        itemComponentName="ListItem"
+
+        itemSize="[1920, 400]"
+        numRows="2"
+        rowHeights="[500, 500]"
+        rowItemSize="[[500,300]]"
+        rowItemSpacing="[[100,0]]"
+        rowLabelOffset="[[0,20]]"
+
+        showRowLabel="[true, true]"
+        showRowCounter="[true, true]"
+        translation="[125,200]"
+        visible="true"
+        />
+
+    <SpringBoard
+      id="SpringBoard"
+      visible="false"/>
+
+    <Dialog
+      id="Warning"
+      visible="false" />
+
+  </children>
+
+  <script type="text/brightscript" uri="pkg:/source/utils/GeneralUtils.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/utils/SGHelperFunctions.brs"/>
+  <script type="text/brightscript" uri="pkg:/components/BoxCastScene.brs"/>
+
+</component>

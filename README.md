@@ -4,7 +4,7 @@
 
 The [BoxCast](https://www.boxcast.com) SDK for Roku video playback allows you to develop your own Roku applications to watch content from your BoxCast account.
 
-The SDK provides a set of [BrightScript](https://sdkdocs.roku.com/display/sdkdoc/BrightScript+Language+Reference) utilities for querying data from your account and a method of attaching to a native [Video](https://sdkdocs.roku.com/display/sdkdoc/Video) element in order to provide viewer analytics back to your BoxCast account.
+The SDK provides a set of [BrightScript](https://sdkdocs.roku.com/display/sdkdoc/BrightScript+Language+Reference) utilities for querying data from your account and a set of [SceneGraph](https://sdkdocs.roku.com/display/sdkdoc/SceneGraph+Core+Concepts) component, including a SpringBoard and Video player that provide viewer analytics back to your BoxCast account.
 
 ## Installation
 
@@ -12,20 +12,22 @@ The SDK provides a set of [BrightScript](https://sdkdocs.roku.com/display/sdkdoc
 git clone https://github.com/boxcast/boxcast-sdk-roku.git
 ```
 
-Copy the `BoxCast` directory into your project source (or include as a git subtree/submodule).
+Copy the `source` and `components` directories into your Roku project (or include as a git subtree/submodule).
 
 ## Usage
 
-Edit the `BoxCast/BoxCastConfig.brs` to match your settings
+Edit the `source/BoxCastConfig.brs` to match your settings
 ```vb
 this = {
+    accountId: ' TODO: fill in from dashboard '
     channelId: ' TODO: fill in from dashboard '
     hostNameForAnalytics: ' TODO: unique identifier used for analytics '
     ...
 }
 ```
 
-Initialize utilities.
+The Main.brs and BoxCastScene components are enough to bootstrap an entire application.  Individual
+utlilites can be sprinkled throughout an existing application, e.g.:
 ```vb
 cfg = BoxCastConfig()
 api = BoxCastAPI()
@@ -36,17 +38,11 @@ List broadcasts, to be displayed in your scene.
 broadcasts = api.GetBroadcastsForChannel(cfg.channelId)
 ```
 
-
-
-When ready to watch a broadcast, simply initialize a VideoScreen component for the broadcast, which will request the playlist from the BoxCast API and present a native player.
-```vb
-VideoScreen(broadcast, cfg.channelId)
-```
-
 ## Known Limitations
 
 * This SDK is for viewing and querying of broadcasts on accounts that do not protect their content with pay-per-view ticketing, host restrictions, geoblocking, passwords, or other authentication means.  The BoxCast API will reject requests for such content, so you should be prepared to handle errors.
 
 ## Changelog
 
-* v1.0.0: Initial version
+* v2.0.0 (2018-03-13): Application skeleton is now based on SceneGraph framework
+* v1.0.0 (2017-05-12): Initial version

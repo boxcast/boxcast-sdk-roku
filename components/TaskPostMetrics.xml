@@ -1,0 +1,61 @@
+<?xml version = "1.0" encoding = "utf-8" ?>
+<component name="TaskPostMetrics" extends="Task">
+
+  <interface>
+    <field id="params" type="assocarray" />
+  </interface>
+
+  <script type="text/brightscript" uri="pkg:/source/BoxCastAPI.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/BoxCastConfig.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/utils/GeneralUtils.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/utils/HttpUtils.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/utils/SGHelperFunctions.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/utils/UrlUtils.brs"/>
+  <script type="text/brightscript" uri="pkg:/source/Storage.brs"/>
+
+  <script type="text/brightscript">
+  <![CDATA[
+    sub init()
+      m.port = createObject("roMessagePort")
+      m.top.functionName = "mainLoop"
+      m.top.control = "RUN"
+      m.top.observeField("params", m.port)
+      m.cfg = BoxCastConfig()
+      m.api = BoxCastAPI()
+      m.viewerId = GetViewerID()
+    end sub
+
+    sub mainLoop()
+      while true
+        msg = wait(0, m.port)
+        mt = type(msg)
+        if msg.getField() = "params"
+          ActuallyPostMetrics(msg.getData())
+        end if
+      end while
+    end sub
+    
+    sub ActuallyPostMetrics(params)
+      print "TaskPostMetrics:ActuallyPostMetrics: ";params
+      broadcast = params.broadcast
+      if params.action = "setup"
+        m.metricsData = {
+          is_live: broadcast.live
+          account_id: broadcast.accountId
+          broadcast_id: broadcast.id
+          channel_id: m.cfg.channelId  ' TODO: consider case of multi-channel apps
+          view_id: GetUniqueViewID()
+          viewer_id: m.viewerId
+        }
+        m.api.PostMetrics(params.action, m.metricsData)
+      else
+        data = ShallowCopy(m.metricsData)
+        data.duration = params.duration
+        data.position = params.position
+        m.api.PostMetrics(params.action, m.metricsData)
+      end if
+    end sub
+  ]]>
+  </script>
+
+</component>
