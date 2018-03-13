@@ -4,7 +4,7 @@
 
 The [BoxCast](https://www.boxcast.com) SDK for Roku video playback allows you to develop your own Roku applications to watch content from your BoxCast account.
 
-The SDK provides a set of [BrightScript](https://sdkdocs.roku.com/display/sdkdoc/BrightScript+Language+Reference) utilities for querying data from your account and a set of [SceneGraph](https://sdkdocs.roku.com/display/sdkdoc/SceneGraph+Core+Concepts) component, including a SpringBoard and Video player that provide viewer analytics back to your BoxCast account.
+The SDK provides a set of [BrightScript](https://sdkdocs.roku.com/display/sdkdoc/BrightScript+Language+Reference) utilities for querying data from your account and a set of [SceneGraph](https://sdkdocs.roku.com/display/sdkdoc/SceneGraph+Core+Concepts) components for building your UI.
 
 ## Installation
 
@@ -26,7 +26,7 @@ this = {
 }
 ```
 
-The Main.brs and BoxCastScene components are enough to bootstrap an entire application.  Individual
+The Main.brs and BoxCastScene components are enough to bootstrap an entire application. Ensure the SpringBoard and Video player are attached per the examples in order to provide viewer analytics back to your BoxCast account. Individual
 utlilites can be sprinkled throughout an existing application, e.g.:
 ```vb
 cfg = BoxCastConfig()
