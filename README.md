@@ -40,6 +40,7 @@ broadcasts = api.GetBroadcastsForChannel(cfg.channelId)
 
 ## Known Limitations
 
+* The `VideoScreen` component uses the `roVideoScreen` and `roVideoScreenEvent` components, which have been deprecated and replaced by SceneGraph equivalents.  This is scheduled to be updated in the next release of the BoxCast SDK for Roku.
 * This SDK is for viewing and querying of broadcasts on accounts that do not protect their content with pay-per-view ticketing, host restrictions, geoblocking, passwords, or other authentication means.  The BoxCast API will reject requests for such content, so you should be prepared to handle errors.
 
 ## Changelog
