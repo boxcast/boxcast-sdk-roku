@@ -52,7 +52,7 @@
         data = ShallowCopy(m.metricsData)
         data.duration = params.duration
         data.position = params.position
-        m.api.PostMetrics(params.action, m.metricsData)
+        m.api.PostMetrics(params.action, data)
       end if
     end sub
   ]]>
