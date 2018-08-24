@@ -97,10 +97,10 @@ sub UpdateBroadcastViewMeta(broadcast)
   end if
 
   ticketPrice = jsonBroadcast.ticket_price
-  if broadcast.ticketPrice = invalid
+  if ticketPrice = invalid
     ticketPrice = 0
-  else if type(broadcast.ticketPrice) = "String"
-    ticketPrice = Val(broadcast.ticketPrice)
+  else if type(ticketPrice) = "String"
+    ticketPrice = Val(ticketPrice)
   end if
   broadcast.addFields({ticketPrice: ticketPrice})
 
