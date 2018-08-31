@@ -25,9 +25,9 @@
 
       <Poster
         id="Image"
-        width="386"
-        height="286"
-        translation="[300,250]"/>
+        width="400"
+        height="225"
+        translation="[290,240]"/>
 
       <Label
         id="CategoryLabel"

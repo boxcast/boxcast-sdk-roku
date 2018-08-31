@@ -39,6 +39,7 @@ sub OnVideoPlayerStateChange()
       m.lastUpdatedMetrics = GetCurrentDateTimeSeconds()
     end if
   else if m.Video.state = "finished"
+    EnsureStartPlayingSanity()
     duration = GetCurrentDateTimeSeconds() - m.streamStarted
     m.TaskPostMetrics.params = {
       action: "complete"
@@ -53,8 +54,15 @@ sub OnVideoPlayerStateChange()
   end if
 end sub
 
+sub EnsureStartPlayingSanity()
+  if m.streamStarted = 0
+    m.streamStarted = GetCurrentDateTimeSeconds()
+  end if
+end sub
+
 sub OnVideoPlayerPositionChange()
   ' Post metrics every 60 seconds
+  EnsureStartPlayingSanity()
   if (GetCurrentDateTimeSeconds() - m.lastUpdatedMetrics) > 60
     position = m.Video.position
     duration = GetCurrentDateTimeSeconds() - m.streamStarted
@@ -87,7 +95,7 @@ sub onContentChange(event as object)
   m.Title.text = content.title
   m.Details.text = content.description
   x = m.Details.localBoundingRect()
-  m.RuntimeLabel.text = "Length: " + minutes.toStr() + " minutes " + seconds.toStr() + " seconds"
+  m.RuntimeLabel.text = "Date: " + content.releaseDate + " - Length: " + minutes.toStr() + " minutes " + seconds.toStr() + " seconds"
   translation = [m.RuntimeLabel.translation[0], m.Details.translation[1] + x.height + 30]
   m.RuntimeLabel.translation = translation
 
@@ -96,20 +104,40 @@ sub onContentChange(event as object)
   m.top.seekposition = m.global.BroadcastResumePositionCache[content.id]
 
   if content.ticketPrice > 0
-    ShowWarning("Unable to play ticketed broadcast", "The BoxCast application for Roku does not allow playback of ticketed broadcasts at this time.")
+    m.LabelList.visible = false
+    m.Details.text = "Ticketed broadcasts cannot be viewed in the app at this time."
+    m.allowPlayback = false
+    m.Video.content = invalid
+    return
+  elseif content.geoblock
+    m.LabelList.visible = false
+    m.Details.text = "Region restricted broadcasts cannot be viewed in this app at this time."
+    m.allowPlayback = false
+    m.Video.content = invalid
+    return
+  elseif content.cryptblock
+    m.LabelList.visible = false
+    m.Details.text = "Password protected broadcasts cannot be viewed in the app at this time."
     m.allowPlayback = false
     m.Video.content = invalid
     return
   else
+    m.LabelList.visible = true
     m.allowPlayback = true
   end if
 
   if IsNullOrEmpty(content.url)
-    ShowWarning("Unable to play broadcast", "The video file could not be found")
+    m.LabelList.visible = false
+    if content.timeframe = "future"
+      m.Details.text = "This broadcast is scheduled to start on " + FormatDateForDisplay(content.starts_at) + " at " + FormatTimeForDisplay(content.starts_at)
+    else
+      m.Details.text = "Unable to play broadcast. The video file could not be found."
+    end if
     m.allowPlayback = false
     m.Video.content = invalid
     return
   else
+    m.LabelList.visible = true
     m.allowPlayback = true
   end if
 
@@ -151,7 +179,7 @@ sub PlayVideo(seekPosition)
     action: "setup"
     broadcast: m.content
   }
-  m.streamStarted = 0
+  m.streamStarted = 0 ' Will be initialized at actual time that *playing* starts (post initial buffer)
   m.lastUpdatedMetrics = GetCurrentDateTimeSeconds()
 end sub
 

@@ -4,6 +4,7 @@
 
 function BoxCastAPI()
   this = {
+    GetChannels: GetChannels
     GetBroadcastsForChannel: GetBroadcastsForChannel
     GetBroadcastById: GetBroadcastById
     UpdateBroadcastViewMeta: UpdateBroadcastViewMeta
@@ -12,12 +13,40 @@ function BoxCastAPI()
   return this
 end function
 
+function GetChannels()
+  cfg = BoxCastConfig()
+  result = CreateObject("roSGNode", "ContentNode")
+
+  ' grabbing all the data for the playlist at once can result in a huge chunk of JSON
+  ' and processing that into a BS structure can crash the box
+  url = cfg.apiRoot + "accounts/" + cfg.accountId + "/channels?l=50"
+  print "Getting channels from: ";url
+  raw = GetStringFromURL(url)
+  json = ParseJSON(raw)
+
+  if json = invalid then
+    return false
+  end if
+
+  for each channel in json
+    c = CreateObject("roSGNode", "ContentNode")
+    c.id = ValidStr(channel.id)
+    c.title = ValidStr(channel.name)
+    result.appendChild(c)
+  next
+
+  return result
+end function
+
 function GetBroadcastsForChannel(channelId, query)
   cfg = BoxCastConfig()
   result = CreateObject("roSGNode", "ContentNode")
 
   if query = invalid or query = "" then
     query = cfg.defaultChannelQueryString
+  end if
+  if channelId = invalid or channelId = "" then
+    return false
   end if
 
   ' grabbing all the data for the playlist at once can result in a huge chunk of JSON
@@ -72,7 +101,12 @@ function ContentNodeFromBroadcastJson(broadcast)
   content.categories =              []
   content.length =                  CalculateDurationSeconds(broadcast.starts_at, broadcast.stops_at)
   content.releaseDate =             FormatDateForDisplay(broadcast.starts_at)
-  content.accountId =               ValidStr(broadcast.account_id)
+
+  content.addFields({
+    accountId: ValidStr(broadcast.account_id)
+    timeframe: ValidStr(broadcast.timeframe)
+    starts_at: ValidStr(broadcast.starts_at)
+  })
 
   if broadcast.transcoder_profile = "720p"
       content.quality = true
@@ -102,7 +136,12 @@ sub UpdateBroadcastViewMeta(broadcast)
   else if type(ticketPrice) = "String"
     ticketPrice = Val(ticketPrice)
   end if
-  broadcast.addFields({ticketPrice: ticketPrice})
+
+  broadcast.addFields({
+    ticketPrice: ticketPrice,
+    timeframe: jsonBroadcast.timeframe,
+    starts_at: jsonBroadcast.starts_at
+  })
 
   url = cfg.apiRoot + "broadcasts/" + broadcast.id + "/view"
   print "Getting view from: ";url
@@ -112,16 +151,18 @@ sub UpdateBroadcastViewMeta(broadcast)
     return
   end if
 
-  live = false
-  if jsonView.status = "live"
-    broadcast.live = true
-  end if
-  broadcast.addFields({live: live})
+  content_settings = jsonView.settings
+  broadcast.addFields({
+    live: (jsonView.status = "live"),
+    geoblock: (content_settings <> invalid and content_settings.geoblock <> invalid),
+    cryptblock: (content_settings <> invalid and content_settings.cryptblock <> invalid),
+  })
 
   broadcast.url = ValidStr(jsonView.playlist)
 end sub
 
 sub PostMetrics(action, data)
+  MaxPossibleDurationSeconds = 60 * 60 * 24
   cfg = BoxCastConfig()
   postString = ""
   if action = "setup"
@@ -136,6 +177,9 @@ sub PostMetrics(action, data)
   end if
   data.action = action
   data.timestamp = GetCurrentDateTimeString()
+  if data.duration <> invalid and data.duration > MaxPossibleDurationSeconds
+    data.duration = MaxPossibleDurationSeconds
+  end if
   postString = FormatJSON(data)
   print "Logging metrics to: ";cfg.metricsUrl;postString
   resp = PostDataToURL(cfg.metricsUrl, postString)
