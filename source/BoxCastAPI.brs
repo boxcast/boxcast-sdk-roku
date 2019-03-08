@@ -108,10 +108,12 @@ function ContentNodeFromBroadcastJson(broadcast)
     starts_at: ValidStr(broadcast.starts_at)
   })
 
-  if broadcast.transcoder_profile = "720p"
+  broadcast720 = CreateObject("roRegex", "^720p", "")
+  if broadcast720.IsMatch(broadcast.transcoder_profile)
       content.quality = true
   end if
-  if broadcast.transcoder_profile = "1080p"
+  broadcast1080 = CreateObject("roRegex", "^1080p", "")
+  if broadcast1080.IsMatch(broadcast.transcoder_profile)
       content.fullHD = true
       content.hdBranded = true
   end if
@@ -153,7 +155,7 @@ sub UpdateBroadcastViewMeta(broadcast)
 
   content_settings = jsonView.settings
   broadcast.addFields({
-    live: (jsonView.status = "live"),
+    live: (jsonView.status = "live" or broadcast.timeframe = "current"),
     geoblock: (content_settings <> invalid and content_settings.geoblock <> invalid),
     cryptblock: (content_settings <> invalid and content_settings.cryptblock <> invalid),
   })
