@@ -38,11 +38,17 @@ List broadcasts, to be displayed in your scene.
 broadcasts = api.GetBroadcastsForChannel(cfg.channelId)
 ```
 
+Before publishing, make sure to also update the `manifest` and `Makefile` with your app name and settings.
+
 ## Known Limitations
 
 * This SDK is for viewing and querying of broadcasts on accounts that do not protect their content with pay-per-view ticketing, host restrictions, geoblocking, passwords, or other authentication means.  The BoxCast API will reject requests for such content, so you should be prepared to handle errors.
 
 ## Changelog
+
+### v2.3.2 on 2019-06-21
+
+* Add sample Makefile and manifest for managing the app
 
 ### v2.3.1 on 2019-03-08
 
