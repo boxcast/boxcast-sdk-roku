@@ -34,8 +34,15 @@
     end sub
     
     sub getBroadcasts(params)
-      live = BoxCastAPI().GetBroadcastsForChannel(params.channel, "q=timeframe%3Acurrent&s=-starts_at&l=50")
-      recent = BoxCastAPI().GetBroadcastsForChannel(params.channel, "q=timeframe%3Apast&s=-starts_at&l=50")
+      if params.channel = "__live__" then
+        channel = m.global.config.channelId
+        live = BoxCastAPI().GetBroadcastsForChannel(channel, "q=timeframe%3Apreroll%20timeframe%3Acurrent%20timeframe%3Anext&s=starts_at&l=1")
+        recent = CreateObject("roSGNode", "ContentNode")
+      else
+        channel = params.channel
+        live = BoxCastAPI().GetBroadcastsForChannel(channel, "q=timeframe%3Acurrent&s=-starts_at&l=50")
+        recent = BoxCastAPI().GetBroadcastsForChannel(channel, "q=timeframe%3Apast&s=-starts_at&l=50")
+      end if
       m.top.response = {live: live, recent: recent}
     end sub
   ]]>
