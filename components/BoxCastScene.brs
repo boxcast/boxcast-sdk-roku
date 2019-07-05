@@ -9,79 +9,27 @@ sub init()
   m.TaskGetBroadcast = m.top.findNode("TaskGetBroadcast")
   m.TaskGetBroadcast.observeField("response", "onGetBroadcast")
 
-  m.RowList = m.top.findNode("RowList")
-  m.RowList.observeField("ItemSelected", "onRowListItemSelected")
+  m.ChannelList = m.top.findNode("ChannelList")
+  m.ChannelList.observeField("ItemSelected", "onChannelListItemSelected")
+
+  m.BroadcastList = m.top.findNode("BroadcastList")
+  m.BroadcastList.observeField("ItemSelected", "onRowListItemSelected")
 
   m.SpringBoard = m.top.findNode("SpringBoard")
   m.SpringBoardLabelList = m.top.findNode("LabelList")
   m.Warning = m.top.findNode("Warning")
 
   ' Theme parameters
-  m.RowList.rowLabelColor = m.global.config.bodyFontPrimaryColor
+  m.ChannelList.rowLabelColor = m.global.config.bodyFontPrimaryColor
+  m.BroadcastList.rowLabelColor = m.global.config.bodyFontPrimaryColor
   m.Rectangle = m.top.findNode("Rectangle")
   m.Rectangle.color = m.global.config.bodyBackgroundColor
   m.Overhang = m.top.findNode("Overhang")
-  m.Overhang.color = m.global.config.bodyBackgroundColor
-  m.Overhang.clockColor = m.global.config.bodyFontPrimaryColor
+  m.Overhang.color = m.global.config.overhangBackgroundColor
+  m.Overhang.clockColor = m.global.config.overhangFontColor
 
-  ' Make first API call to get the list of broadcasts...
-  m.TaskListBroadcasts.params = {
-    channel: m.global.config.channelId
-  }
-end sub
-
-function onKeyEvent(key as String, press as Boolean) as Boolean
-  print "BoxCastScene::onKeyEvent ";key;" "; press
-  if press then
-    if key = "options"
-
-    else if key = "back"
-      if m.Warning.visible
-        m.Warning.visible = false
-        return true
-      else if m.SpringBoard.visible
-        m.SpringBoard.visible = false
-        m.RowList.visible = true
-        m.RowList.setFocus(true)
-        return true
-      else
-        return false
-      end if
-
-    else if key = "OK"
-      if m.Warning.visible
-        m.Warning.visible = false
-        return true
-      end if
-    end if
-
-  end if
-  return false
-end function
-
-sub onListBroadcasts(event as object)
-  print "onListBroadcasts"
-  listResponse = m.TaskListBroadcasts.response
-
-  parentNode = createObject("roSGNode", "ContentNode")
-  m.RowListContent = []
-
-  live = listResponse.live
-  if live.getChild(0) <> invalid then
-    live.title = "Live Broadcasts"
-    parentNode.appendChild(live)
-    m.RowListContent.push(live)
-  end if
-
-  recent = listResponse.recent
-  if recent.getChild(0) <> invalid then
-    recent.title = "Recent Broadcasts"
-    parentNode.appendChild(recent)
-    m.RowListContent.push(recent)
-  end if
-
-  m.RowList.Content = parentNode
-  m.RowList.setFocus(true)
+  ' Init
+  createChannelListContent()
 
   ' Check for content deep link
   args = m.global.mainArgs
@@ -93,13 +41,123 @@ sub onListBroadcasts(event as object)
     }
   else
     m.autoPlay = false
+    m.ChannelList.jumpToItem = 0
+    onChannelListItemSelected({})
   end if
 end sub
 
+function onKeyEvent(key as String, press as Boolean) as Boolean
+  print "BoxCastScene::onKeyEvent ";key;" "; press
+  if press then
+    if m.Warning.visible
+      ' Any key exits warning dialog
+      hideWarningDialog()
+      return true
+
+    else if key = "back"
+      if m.SpringBoard.visible
+        m.SpringBoard.visible = false
+        m.BroadcastList.visible = true
+        m.ChannelList.visible = true
+        m.BroadcastList.setFocus(true)
+        return true
+      else if m.ChannelList.hasFocus()
+        ' support exit from app
+        print "Closing app..."
+        m.global.closeApp = true
+        return true
+      else if m.BroadcastList.visible
+        'm.BroadcastList.visible = false
+        m.ChannelList.visible = true
+        m.ChannelList.setFocus(true)
+        return true
+      end if
+
+    else if key = "left"
+      if m.BroadcastList.visible then
+        if m.BroadcastList.ItemFocused = 0 then
+          m.ChannelList.visible = true
+          m.ChannelList.setFocus(true)
+          return true
+        end if
+      end if
+
+    else if key = "right"
+      if m.ChannelList.hasFocus()
+        onChannelListItemSelected({})
+      end if
+
+    end if
+
+  end if
+  return false
+end function
+
+sub hideWarningDialog()
+  m.Warning.visible = false
+  m.BroadcastList.visible = false
+  m.SpringBoard.visible = false
+  m.ChannelList.visible = true
+  m.ChannelList.setFocus(true)
+end sub
+
+sub onChannelListItemSelected(event as object)
+  idx = m.ChannelList.ItemFocused
+  channelObj = m.ChannelList.Content.getChild(idx)
+  if channelObj = Invalid then
+    return
+  end if
+  ' m.ChannelList.visible = false
+  m.BroadcastList.visible = true
+  ' Make API call to get the list of broadcasts...
+  m.TaskListBroadcasts.params = {
+    channel: channelObj.id
+  }
+end sub
+
+sub createChannelListContent()
+  print "createChannelListContent"
+  m.ChannelList.visible = true
+  m.ChannelList.setFocus(true)
+  m.ChannelList.Content = m.global.channels
+  print "created channellistcontent"; m.ChannelList.Content
+end sub
+
+sub onListBroadcasts(event as object)
+  print "onListBroadcasts"
+  listResponse = m.TaskListBroadcasts.response
+
+  parentNode = createObject("roSGNode", "ContentNode")
+  m.BroadcastListContent = []
+
+  live = listResponse.live
+  if live.getChild(0) <> invalid then
+    live.title = "Live Broadcasts"
+    parentNode.appendChild(live)
+    m.BroadcastListContent.push(live)
+  end if
+
+  recent = listResponse.recent
+  if recent.getChild(0) <> invalid then
+    recent.title = "Recent Broadcasts"
+    parentNode.appendChild(recent)
+    m.BroadcastListContent.push(recent)
+  end if
+
+  if live.getChild(0) = invalid and recent.getChild(0) = invalid
+    m.Warning.title = "No Broadcasts in Channel"
+    m.Warning.message = "There are no broadcasts currently available in this channe. Press the back button to continue."
+    m.Warning.visible = true
+  end if
+
+  m.BroadcastList.Content = parentNode
+  m.BroadcastList.setFocus(true)
+end sub
+
 sub onRowListItemSelected(event as object)
-  print "onRowListItemSelected";m.RowList.RowItemSelected
-  idx = m.RowList.RowItemSelected
-  broadcast = m.RowListContent[idx[0]].getChild(idx[1])
+  print "onRowListItemSelected";m.BroadcastList.RowItemSelected
+  idx = m.BroadcastList.RowItemSelected
+  broadcast = m.BroadcastListContent[idx[0]].getChild(idx[1])
   m.TaskGetBroadcast.params = {
     broadcast: broadcast
   }
@@ -113,7 +171,8 @@ sub onGetBroadcast(event as object)
     return
   end if
   print "onGetBroadcast"; broadcastWithView.id
-  m.RowList.visible = false
+  m.ChannelList.visible = false
+  m.BroadcastList.visible = false
   m.SpringBoard.autoPlay = m.autoPlay
   m.autoPlay = false ' NOTE: only autoplay on initial launch with deep-link, then always take to springboard UI
   m.SpringBoard.visible = true

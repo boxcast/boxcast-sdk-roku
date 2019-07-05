@@ -21,22 +21,34 @@
       showOptions="false"
       logoUri="pkg:/images/logo.png" />
 
+    <LabelList
+      id="ChannelList"
+      translation="[50, 200]"
+      itemsize="[300, 60]"
+      >
+      <!--ContentNode role="content">
+        <ContentNode id="channelidhere1000" title="All Videos" />
+        <ContentNode id="channelidhere1001" title="Custom Channel 1" />
+        <ContentNode id="channelidhere1002" title="Custom Channel 2" />
+      </ContentNode-->
+    </LabelList>
+
     <RowList
-        id="RowList"
+        id="BroadcastList"
 
         itemComponentName="ListItem"
 
-        itemSize="[1920, 400]"
-        numRows="2"
-        rowHeights="[500, 500]"
-        rowItemSize="[[500,300]]"
-        rowItemSpacing="[[100,0]]"
+        itemSize="[1440, 400]"
+        numRows="1"
+        rowHeights="[500]"
+        rowItemSize="[[400,240]]"
+        rowItemSpacing="[[50,0]]"
         rowLabelOffset="[[0,20]]"
 
         showRowLabel="[true, true]"
         showRowCounter="[true, true]"
-        translation="[125,200]"
-        visible="true"
+        translation="[425, 200]"
+        visible="false"
         />
 
     <SpringBoard

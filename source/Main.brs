@@ -1,5 +1,6 @@
 sub Main(args as Dynamic)
   cfg = BoxCastConfig()
+  api = BoxCastAPI()
 
   screen = CreateObject("roSGScreen")
   m.port = CreateObject("roMessagePort")
@@ -8,15 +9,20 @@ sub Main(args as Dynamic)
   m.global = screen.getGlobalNode()
   m.global.addFields({
     mainArgs: args,
-    config: cfg
+    config: cfg,
+    channels: api.GetChannels(),
+    closeApp: false
   })
   screen.show()
 
   while(true)
-    msg = wait(0, m.port)
+    msg = wait(500, m.port)
     msgType = type(msg)
-    if msgType = "roSGScreenEvent"
-      if msg.isScreenClosed() then return
+    if msgType = "roSGScreenEvent" and msg.isScreenClosed()
+      return
+    end if
+    if m.global.closeApp = true
+      return
     end if
   end while
 end sub

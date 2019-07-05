@@ -17,6 +17,11 @@ function GetChannels()
   cfg = BoxCastConfig()
   result = CreateObject("roSGNode", "ContentNode")
 
+  c = CreateObject("roSGNode", "ContentNode")
+  c.id = ValidStr(cfg.channelId)
+  c.title = ValidStr("All Videos")
+  result.appendChild(c)
+
   ' grabbing all the data for the playlist at once can result in a huge chunk of JSON
   ' and processing that into a BS structure can crash the box
   url = cfg.apiRoot + "accounts/" + cfg.accountId + "/channels?l=50"
