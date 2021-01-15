@@ -1,10 +1,12 @@
-<a href="https://www.boxcast.com" target="_blank"><img src="https://www.boxcast.com/hs-fs/hub/484866/file-2483746126-png/Logos/NewBoxCastLogo.png?t=1494524438771" height="25"></a>&nbsp;<a href="https://developer.roku.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/en/6/6c/Roku_logo_white_on_purple.jpg" height="25"></a>
+<a href="https://www.boxcast.com" target="_blank"><img src="https://www.boxcast.com/hs-fs/hub/484866/file-2483746126-png/Logos/NewBoxCastLogo.png?t=1494524438771" height="25"></a>&nbsp;<a href="https://developer.roku.com" target="_blank"><img src="https://image.roku.com/bWFya2V0aW5n/roku-logo.png" height="25"></a>
 
 # boxcast-sdk-roku
 
 The [BoxCast](https://www.boxcast.com) SDK for Roku video playback allows you to develop your own Roku applications to watch content from your BoxCast account.
 
-The SDK provides a set of [BrightScript](https://sdkdocs.roku.com/display/sdkdoc/BrightScript+Language+Reference) utilities for querying data from your account and a set of [SceneGraph](https://sdkdocs.roku.com/display/sdkdoc/SceneGraph+Core+Concepts) components for building your UI.
+This repository provides an entire sample application, built with a combination of the following Roku technologies:
+* [BrightScript](https://sdkdocs.roku.com/display/sdkdoc/BrightScript+Language+Reference) utilities for querying data from your account and tracking viewer analytics
+* [SGDEX](https://github.com/rokudev/SceneGraphDeveloperExtensions) components that can be extended to customize your viewer's experience
 
 ## Installation
 
@@ -12,39 +14,52 @@ The SDK provides a set of [BrightScript](https://sdkdocs.roku.com/display/sdkdoc
 git clone https://github.com/boxcast/boxcast-sdk-roku.git
 ```
 
-Copy the `source` and `components` directories into your Roku project (or include as a git subtree/submodule).
-
 ## Usage
 
-Edit the `source/BoxCastConfig.brs` to match your settings
+Edit the `source/BoxCastConfig.brs` to match your settings. The most important
+fields that _must_ be filled in are your Account ID and Channel ID, which can be
+found on your
+<a href="https://dashboard.boxcast.com/#/settings" target="_blank">Dashboard Settings</a>.
+
 ```vb
 this = {
-    accountId: ' TODO: fill in from dashboard '
-    channelId: ' TODO: fill in from dashboard '
-    hostNameForAnalytics: ' TODO: unique identifier used for analytics '
-    ...
+  ...
+
+  Account: {
+    id:         ' TODO: fill in from dashboard '
+    channel_id: ' TODO: fill in from dashboard '
+  }
+
+  ...
 }
 ```
 
-The Main.brs and BoxCastScene components are enough to bootstrap an entire application. Ensure the SpringBoard and Video player are attached per the examples in order to provide viewer analytics back to your BoxCast account. Individual
-utlilites can be sprinkled throughout an existing application, e.g.:
-```vb
-cfg = BoxCastConfig()
-api = BoxCastAPI()
-```
+Then follow <a href="https://developer.roku.com/docs/developer-program/getting-started/roku-dev-prog.md" target="_blank">
+standard Roku Development practices</a>.  Note that there is a Makefile that
+includes a `make install` script for easily bundling and installing your
+application on your Roku device, provided that you set up an environment
+variable for `ROKU_DEV_TARGET` and `DEVPASSWORD`.
 
-List broadcasts, to be displayed in your scene.
-```vb
-broadcasts = api.GetBroadcastsForChannel(cfg.channelId)
-```
-
-Before publishing, make sure to also update the `manifest` and `Makefile` with your app name and settings.
+Before publishing, make sure to also update the `manifest` and `Makefile` with your app
+name and settings, as well as configuring your own images.
 
 ## Known Limitations
 
 * This SDK is for viewing and querying of broadcasts on accounts that do not protect their content with pay-per-view ticketing, host restrictions, geoblocking, passwords, or other authentication means.  The BoxCast API will reject requests for such content, so you should be prepared to handle errors.
 
+## SGDEX License
+
+SceneGraph Developer Extensions (SGDEX) and associated documentation files (the "Software") are Copyright (c) 2019 Roku, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
 ## Changelog
+
+### v3.0.0 on (unreleased)
+
+* Rewritten sample application based on SGDEX
 
 ### v2.3.2 on 2019-06-21
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="DetailsHandler" extends="ContentHandler" xsi:noNamespaceSchemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+  <script type="text/brightscript" uri="DetailsHandler.brs" />
+  <script type="text/brightscript" uri="pkg:/source/BoxCastConfig.brs" />
+  <script type="text/brightscript" uri="pkg:/source/base/BoxCastContent.brs" />
+  <script type="text/brightscript" uri="pkg:/source/base/rsg_utils.brs" />
+</component>

@@ -1,19 +1,27 @@
 Function BoxCastConfig() As Object
   this = {
-    ' Edit for your application
-    accountId: "DEMOAMYR"
-    channelId: "JLp4ZFFDfDgCKWEpXIk5"
-    hostNameForAnalytics: "BoxCast.tv for Roku"
+    HostNameForAnalytics: "BoxCast.tv for Roku"
+    ApiRoot:              "https://api.boxcast.com"
+    MetricsUrl:           "https://metrics.boxcast.com/player/interaction"
+    ImageResizeUrl:       "https://images.weserv.nl"
+    GroupedRowPrefix:     "Browse"
 
-    ' Can leave as default
-    defaultChannelQueryString: "q=timeframe%3Arelevant&s=-starts_at&l=20"
-    apiRoot: "https://api.boxcast.com/"
-    metricsUrl: "https://metrics.boxcast.com/player/interaction"
+    ' Custom TV App Requirements
+    Theme: {
+      OverhangLogoUri:  "pkg:/images/logo.png"
+      OverhangTitle:    ""
+      BackgroundColor:  "#336699"
+      AccentColor:      "#CCCCCC"
+    }
 
-    ' Theme defaults
-    bodyBackgroundColor: "#336699"
-    bodyFontPrimaryColor: "#000000"
-    bodyFontSecondaryColor: "#CCCCCC"
+    Account: {
+      id:           "DEMOAMYR"
+      name:         "Testing"
+      description:  ""
+      thumb:        {src: ""}
+      market:       ""
+      channel_id:   "JLp4ZFFDfDgCKWEpXIk5"
+    }
   }
   return this
 

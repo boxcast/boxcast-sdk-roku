@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="MainScene" extends="BaseScene" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+  <!-- Common Utilities -->
+  <script type="text/brightscript" uri="pkg:/source/BoxCastConfig.brs" />
+  <script type="text/brightscript" uri="pkg:/source/base/BoxCastContent.brs" />
+  <script type="text/brightscript" uri="pkg:/source/base/rsg_utils.brs" />
+  <script type="text/brightscript" uri="pkg:/source/base/Storage.brs" />
+
+  <!-- Main Scene -->
+  <script type="text/brightscript" uri="MainScene.brs" />
+
+  <!-- Secondary Scenes -->
+  <script type="text/brightscript" uri="AccountView.brs" />
+  <script type="text/brightscript" uri="DetailsView.brs" />
+  <script type="text/brightscript" uri="SearchView.brs" />
+  <script type="text/brightscript" uri="VideoPlayer.brs" />
+</component>
