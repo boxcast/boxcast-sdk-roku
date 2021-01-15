@@ -1,6 +1,6 @@
 ## Changelog
 
-### v3.0.0 on (unreleased)
+### v3.0.0 on 2021-01-15
 
 * Rewritten sample application based on SGDEX
 
