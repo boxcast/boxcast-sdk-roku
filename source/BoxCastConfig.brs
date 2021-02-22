@@ -15,8 +15,8 @@ Function BoxCastConfig() As Object
     }
 
     Account: {
-      id:           "DEMOAMYR"
-      name:         "Testing"
+      id:           "RNKXNG"
+      name:         "FBC of the Islands"
       description:  ""
       thumb:        {src: ""}
       market:       ""
