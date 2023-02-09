@@ -19,7 +19,7 @@ git clone https://github.com/boxcast/boxcast-sdk-roku.git
 Edit the `source/BoxCastConfig.brs` to match your settings. The most important
 fields that _must_ be filled in are your Account ID and Channel ID, which can be
 found on your
-<a href="https://dashboard.boxcast.com/#/settings" target="_blank">Dashboard Settings</a>.
+<a href="https://dashboard.boxcast.com/settings/my-account" target="_blank">Dashboard Settings</a>.
 
 ```vb
 this = {
