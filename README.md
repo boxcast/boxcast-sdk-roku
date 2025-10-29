@@ -2,6 +2,8 @@
 
 # boxcast-sdk-roku
 
+**This repository is no longer being maintained or supported. Please use at your own risk.**
+
 The [BoxCast](https://www.boxcast.com) SDK for Roku video playback allows you to develop your own Roku applications to watch content from your BoxCast account.
 
 This repository provides an entire sample application, built with a combination of the following Roku technologies:
